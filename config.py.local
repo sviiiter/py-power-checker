@@ -1,0 +1,23 @@
+# -*- coding: utf-8 -*-
+
+requestList = {
+    '2': 'Плановые работы',
+    '3': 'Внерегламентные работы',
+    '4': 'Аварийные работы'
+}
+link = 'https://example.url'
+query = {
+    'request': 0,
+    'regionCode': 0,
+    'districtCode': 'qwerty',
+    'locality': 'qwerty',
+    'localityCode': 'qwerty'
+}
+
+headers = {
+    'User-Agent': 'useragent'
+}
+
+telegaToken = 'qwerty'
+telegaChatId = 'qwerty'
+telegaGroupChatId = 'qwerty'
