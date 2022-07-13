@@ -1,3 +1,5 @@
+from logger import planActivitiesLogger, outOfRegulationsActivitiesLogger, accidentActivitiesLogger
+from repository import ResponseFileRepository as repository
 from config import link, query, headers, requestList
 import requests
 from requests.packages.urllib3.exceptions import InsecureRequestWarning
@@ -5,30 +7,15 @@ from notify import Notification
 import json
 from datetime import datetime
 import sys
-import os
 
-# off ssl warning
+# Configure request module: off ssl warning
 requests.packages.urllib3.disable_warnings(InsecureRequestWarning)
 
-
-def get_data_file(work_type):
-    f_name = 'id_{}.data'.format(work_type)
-    if os.path.isfile(f_name):
-        f = open(f_name, 'r')
-    else:
-        f = open(f_name, 'w+')
-
-    data = f.read()
-    f.close()
-
-    return data
-
-
-def set_data_file(work_type, data):
-    f = open('id_{}.data'.format(work_type), 'w')
-    f.write(data)
-    f.close()
-
+loggers = {
+    2: planActivitiesLogger,
+    3: outOfRegulationsActivitiesLogger,
+    4: accidentActivitiesLogger
+}
 
 for key, value in requestList.items():
     query['request'] = key
@@ -36,12 +23,15 @@ for key, value in requestList.items():
     returnText = json.loads(responseObj.text)
 
     if returnText != 0:
+
+        loggers[int(key)].info(returnText)
         try:
             if isinstance(returnText, list):
-                if get_data_file(key) == responseObj.text:
+                if repository.get_by_activity_type(key) == responseObj.text:
                     continue
 
-                set_data_file(key, responseObj.text)
+                # @TODO: It is wrong to save the data inside repo. Use separate class to manage the repo.
+                repository.set_by_activity_type(key, responseObj.text)
 
                 place = returnText[0]['Place']
                 timeFrom = datetime.strptime(returnText[0]['DisconnectionDateTime'], '%Y-%m-%dT%H:%M:%S').strftime('%d.%m.%Y %H:%M')
