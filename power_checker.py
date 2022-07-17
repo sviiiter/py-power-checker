@@ -1,4 +1,4 @@
-from logger import planActivitiesLogger, outOfRegulationsActivitiesLogger, accidentActivitiesLogger
+from logger import planActivitiesLogger, outOfRegulationsActivitiesLogger, accidentActivitiesLogger, debugLogger
 from repository import ResponseFileRepository as repository
 from config import link, query, headers, requestList
 import requests
@@ -16,6 +16,8 @@ loggers = {
     3: outOfRegulationsActivitiesLogger,
     4: accidentActivitiesLogger
 }
+
+debugLogger.debug('start request')
 
 for key, value in requestList.items():
     query['request'] = key
@@ -46,5 +48,5 @@ for key, value in requestList.items():
             noty = Notification(sys.exc_info()[0])
             raise
 
-        noty.show_notification()
-        noty.telegram_bot()
+        # noty.show_notification()
+        # noty.telegram_bot()

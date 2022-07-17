@@ -1,7 +1,9 @@
 import logging.handlers
 import sys
+from config import app_env
 
 
+loggers = []
 formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
 
 stdoutHandler = logging.StreamHandler(sys.stdout)
@@ -17,7 +19,7 @@ fileHandler.setLevel(logging.INFO)
 fileHandler.setFormatter(formatter)
 
 planActivitiesLogger.addHandler(fileHandler)
-planActivitiesLogger.addHandler(stdoutHandler)
+loggers.append(planActivitiesLogger)
 
 # out-of-regulations-activities definitions
 outOfRegulationsActivitiesLogger = logging.getLogger("out-of-regulations-activities")
@@ -28,7 +30,7 @@ fileHandler.setLevel(logging.INFO)
 fileHandler.setFormatter(formatter)
 
 outOfRegulationsActivitiesLogger.addHandler(fileHandler)
-outOfRegulationsActivitiesLogger.addHandler(stdoutHandler)
+loggers.append(outOfRegulationsActivitiesLogger)
 
 # accident-activities definitions
 accidentActivitiesLogger = logging.getLogger("accident-activities")
@@ -39,5 +41,12 @@ fileHandler.setLevel(logging.INFO)
 fileHandler.setFormatter(formatter)
 
 accidentActivitiesLogger.addHandler(fileHandler)
-accidentActivitiesLogger.addHandler(stdoutHandler)
+loggers.append(accidentActivitiesLogger)
 
+debugLogger = logging.getLogger("debug-logger")
+debugLogger.setLevel(logging.DEBUG)
+loggers.append(debugLogger)
+
+if app_env == 'debug':
+    for l in loggers:
+        l.addHandler(stdoutHandler)
