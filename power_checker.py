@@ -48,5 +48,4 @@ for key, value in requestList.items():
             noty = Notification(sys.exc_info()[0])
             raise
 
-        # noty.show_notification()
-        # noty.telegram_bot()
+        noty.telegram_bot()
