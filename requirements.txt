@@ -5,6 +5,7 @@ MouseInfo==0.1.3
 Pillow==8.1.0
 PyGetWindow==0.0.9
 PyMsgBox==1.0.9
+pyobjc-core==7.3
 pyobjc-framework-Accounts==7.1
 pyobjc-framework-AddressBook==7.1
 pyobjc-framework-AppleScriptKit==7.1
