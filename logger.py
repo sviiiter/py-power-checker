@@ -1,7 +1,10 @@
 import logging.handlers
 import sys
 from config import app_env
+import os
 
+dirname = os.path.dirname(__file__)
+filename = os.path.join(dirname, 'relative/path/to/file/you/want')
 
 loggers = []
 formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
@@ -14,7 +17,9 @@ stdoutHandler.setFormatter(formatter)
 planActivitiesLogger = logging.getLogger("plan-activities")
 planActivitiesLogger.setLevel(logging.DEBUG)
 
-fileHandler = logging.handlers.RotatingFileHandler('runtime/logs/plan_activities.log', maxBytes=300, backupCount=5)
+fileHandler = logging.handlers.RotatingFileHandler(
+    os.path.join(dirname, 'runtime/logs/plan_activities.log'), maxBytes=300, backupCount=5
+)
 fileHandler.setLevel(logging.INFO)
 fileHandler.setFormatter(formatter)
 
@@ -25,7 +30,9 @@ loggers.append(planActivitiesLogger)
 outOfRegulationsActivitiesLogger = logging.getLogger("out-of-regulations-activities")
 outOfRegulationsActivitiesLogger.setLevel(logging.DEBUG)
 
-fileHandler = logging.handlers.RotatingFileHandler('runtime/logs/out_of_regulations_activities.log', maxBytes=300, backupCount=5)
+fileHandler = logging.handlers.RotatingFileHandler(
+    os.path.join(dirname, 'runtime/logs/out_of_regulations_activities.log'), maxBytes=300, backupCount=5
+)
 fileHandler.setLevel(logging.INFO)
 fileHandler.setFormatter(formatter)
 
@@ -36,7 +43,9 @@ loggers.append(outOfRegulationsActivitiesLogger)
 accidentActivitiesLogger = logging.getLogger("accident-activities")
 accidentActivitiesLogger.setLevel(logging.DEBUG)
 
-fileHandler = logging.handlers.RotatingFileHandler('runtime/logs/accident_activities.log', maxBytes=300, backupCount=5)
+fileHandler = logging.handlers.RotatingFileHandler(
+    os.path.join(dirname, 'runtime/logs/accident_activities.log'), maxBytes=300, backupCount=5
+)
 fileHandler.setLevel(logging.INFO)
 fileHandler.setFormatter(formatter)
 
