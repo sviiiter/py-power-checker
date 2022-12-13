@@ -4,7 +4,6 @@ from config import app_env
 import os
 
 dirname = os.path.dirname(__file__)
-filename = os.path.join(dirname, 'relative/path/to/file/you/want')
 
 loggers = []
 formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')

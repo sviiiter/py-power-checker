@@ -12,7 +12,7 @@ class ResponseFileRepository:
 
     @staticmethod
     def __get_data_file(activity_type):
-        f_name = 'id_{}.data'.format(activity_type)
+        f_name = os.path.join(os.path.dirname(__file__), 'id_{}.data'.format(activity_type))
         if os.path.isfile(f_name):
             f = open(f_name, 'r')
         else:
@@ -24,6 +24,6 @@ class ResponseFileRepository:
 
     @staticmethod
     def __set_data_file(activity_type, data):
-        f = open('id_{}.data'.format(activity_type), 'w')
+        f = open(os.path.join(os.path.dirname(__file__), 'id_{}.data'.format(activity_type)), 'w')
         f.write(data)
         f.close()

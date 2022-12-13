@@ -26,14 +26,15 @@ for key, value in requestList.items():
 
     if returnText != 0:
 
-        loggers[int(key)].info(returnText)
+        txt_dump = json.dumps(returnText, ensure_ascii=False)
+        loggers[int(key)].info(txt_dump)
         try:
             if isinstance(returnText, list):
-                if repository.get_by_activity_type(key) == responseObj.text:
+                if repository.get_by_activity_type(key) == txt_dump:
                     continue
 
                 # @TODO: It is wrong to save the data inside repo. Use separate class to manage the repo.
-                repository.set_by_activity_type(key, responseObj.text)
+                repository.set_by_activity_type(key, txt_dump)
 
                 place = returnText[0]['Place']
                 timeFrom = datetime.strptime(returnText[0]['DisconnectionDateTime'], '%Y-%m-%dT%H:%M:%S').strftime('%d.%m.%Y %H:%M')
