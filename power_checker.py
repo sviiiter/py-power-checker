@@ -1,12 +1,14 @@
-from logger import planActivitiesLogger, outOfRegulationsActivitiesLogger, accidentActivitiesLogger, debugLogger
-from repository import ResponseFileRepository as repository
-from config import link, query, headers, requestList
+import json
+import sys
+from datetime import datetime
+
 import requests
 from requests.packages.urllib3.exceptions import InsecureRequestWarning
+
+from config import link, query, headers, requestList
+from logger import planActivitiesLogger, outOfRegulationsActivitiesLogger, accidentActivitiesLogger, debugLogger
 from notify import Notification
-import json
-from datetime import datetime
-import sys
+from repository import ResponseFileRepository as repository
 
 # Configure request module: off ssl warning
 requests.packages.urllib3.disable_warnings(InsecureRequestWarning)
@@ -19,30 +21,39 @@ loggers = {
 
 debugLogger.debug('start request')
 
+
+def format_response(return_text: list, action_type: str) -> str:
+    place = return_text[0]['Place']
+    time_from = datetime.strptime(return_text[0]['DisconnectionDateTime'], '%Y-%m-%dT%H:%M:%S').strftime(
+        '%d.%m.%Y %H:%M')
+    time_to = datetime.strptime(return_text[0]['EnergyOnPlanningDateTime'], '%Y-%m-%dT%H:%M:%S').strftime(
+        '%d.%m.%Y %H:%M')
+    work_desc = return_text[0]['DisconnectionCause']
+
+    return '{}({}): {}-{} | {}'.format(action_type, work_desc, time_from, time_to, place)
+
+
 for key, value in requestList.items():
     query['request'] = key
     responseObj = requests.get(link, params=query, verify=False, headers=headers)
     returnText = json.loads(responseObj.text)
 
     if returnText != 0:
-
-        txt_dump = json.dumps(returnText, ensure_ascii=False)
-        loggers[int(key)].info(txt_dump)
+        loggers[int(key)].info(
+            json.dumps(returnText, ensure_ascii=False)
+        )
         try:
             if isinstance(returnText, list):
+
+                txt_dump = format_response(returnText, value)
+
                 if repository.get_by_activity_type(key) == txt_dump:
                     continue
 
                 # @TODO: It is wrong to save the data inside repo. Use separate class to manage the repo.
                 repository.set_by_activity_type(key, txt_dump)
 
-                place = returnText[0]['Place']
-                timeFrom = datetime.strptime(returnText[0]['DisconnectionDateTime'], '%Y-%m-%dT%H:%M:%S').strftime('%d.%m.%Y %H:%M')
-                timeTo = datetime.strptime(returnText[0]['EnergyOnPlanningDateTime'], '%Y-%m-%dT%H:%M:%S').strftime('%d.%m.%Y %H:%M')
-                placeEquipment = returnText[0]['EquipmentName']
-                workDesc = returnText[0]['DisconnectionCause']
-
-                noty = Notification('{}({}): {}-{} | {}'.format(value, workDesc, timeFrom, timeTo, place))
+                noty = Notification(txt_dump)
             else:
                 noty = Notification(value)
         except:
